@@ -1,0 +1,48 @@
+#include <SPI.h>
+uint8_t v[4];
+byte indx;
+uint8_t c[2], b[2];
+volatile boolean process;
+
+void setup (void) {
+   Serial.begin (115200);
+   SPI.beginTransaction(SPISettings(1000000, MSBFIRST , SPI_MODE0));//MSB first : makes MSB of Mastrer data to be serially copied to MSB of slave rescive register ; LSB first : makes LSB of master data to be serially copied to MSB of slave recieve register.
+    pinMode(MOSI, INPUT); //master to slave
+   SPCR |= _BV(SPE); // turn on SPI in slave mode
+ 
+   
+   
+   SPI.attachInterrupt(); // turn on interrupt
+}
+ISR (SPI_STC_vect) // SPI interrupt routine
+{
+  /*read 8 bit hex values*/
+  for(int i=0 ;i<4  ; i++)
+  {
+   
+   v[i] = SPI.transfer(i);
+   
+   }
+}
+
+
+
+void loop (void) {
+     /*reasolve v1*/
+     uint8_t low1 = v[0];
+     uint8_t high1 = v[1];
+     uint16_t myADCval1 = v[1];
+     myADCval1 = ((myADCval1 << 8) | low1);
+     Serial.print("V1=");
+     Serial.println(myADCval1); 
+     /*resolve v2*/ 
+   uint8_t low2 = v[2];
+     uint8_t high2 = v[3];
+     uint16_t myADCval2 = v[3];
+     myADCval2 = ((myADCval2 << 8) | low2);
+      Serial.print("V2=");
+   Serial.println(myADCval2);  
+    
+   
+}
+
