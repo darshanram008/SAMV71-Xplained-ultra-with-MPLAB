@@ -1,6 +1,9 @@
 # spi
 To perform SPI communication between SAMv71 and arduino
-SAM as master
+
+
+
+
 #include <stddef.h>                     // Defines NULL
 #include <stdbool.h>                    // Defines true
 #include <stdlib.h>                     // Defines EXIT_FAILURE
