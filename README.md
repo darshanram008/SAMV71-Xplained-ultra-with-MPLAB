@@ -69,7 +69,7 @@ int main ( void )
         {
             transferStatus = false;
             printf("message sent\n\r");
-            LED_Clear();
+            LED_Clear(); //turn on LED
             
             
            
