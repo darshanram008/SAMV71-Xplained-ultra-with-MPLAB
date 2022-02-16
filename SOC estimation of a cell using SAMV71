@@ -1,0 +1,308 @@
+
+#include <stddef.h>                     // Defines NULL
+#include <stdbool.h>                    // Defines true
+#include <stdlib.h>                     // Defines EXIT_FAILURE
+#include <stdio.h>
+#include<soc.h>
+#include "definitions.h"                // SYS function prototypes
+
+#define factor2 3253/4096
+#define factor1 (1/21600.0f)*current
+#define capacity 6
+#define C_rate 1
+//unsigned int voltage;
+extern unsigned int voltage;
+double current;
+unsigned int v1;
+unsigned int v2;
+unsigned int v3;
+unsigned int v4;
+unsigned int temp;
+int count = 1;
+extern double SOC;
+double SOC1, SOC2;
+
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: Main Entry Point
+// *****************************************************************************
+// *****************************************************************************
+/***void switch_handler(PIO_PIN pin, uintptr_t context)
+{
+   // printf("------------------------\n\r");
+   // printf("Reading voltage v1\r\n");
+  //  printf("------------------------\n\r");
+    
+  //  AFEC1_ConversionStart();
+  //  while(!AFEC1_ChannelResultIsReady(AFEC_CH0)){   
+  //  };
+   // v1 = AFEC1_ChannelResultGet(AFEC_CH0)*factor2;
+    
+   
+    
+    printf("------------------------\n\r");
+    printf("enter new value of v2 within 4 seconds\r\n");
+    printf("------------------------\n\r");
+    
+     SYSTICK_DelayMs(4000); 
+     
+    AFEC1_ConversionStart();
+    while(!AFEC1_ChannelResultIsReady(AFEC_CH0)){   
+    };
+    v2 = AFEC1_ChannelResultGet(AFEC_CH0)*factor2;
+   
+    
+    if(v2 > v1)
+    {
+        printf("------------------------\n\r");
+       printf("Charing detected\r\n");
+       printf("------------------------\n\r");
+          while (1)
+        {
+            AFEC1_ConversionStart();
+            while(!AFEC1_ChannelResultIsReady(AFEC_CH1)){
+            
+            };
+            //channel 1 is PC13 ad4 - current
+            //channel 0 is PB1 dig23 - voltage
+            current = AFEC1_ChannelResultGet(AFEC_CH1)*factor2*capacity*C_rate/1000;
+           
+            SOC = SOC + factor1;
+            count = count + 1;
+        
+            printf("---------------------------------\r\n");
+            printf("SOC = %f %%\r\n",SOC*100);
+            printf("---------------------------------\r\n");   
+        
+            if (SOC > 1.000000){
+                printf("---------------------------------\r\n");
+                printf("END OF CHARGE (%i seconds)\r\n",count);
+                printf("---------------------------------\r\n");
+                GPIO_PA23_Set();
+                
+            }
+        
+            SYSTICK_DelayMs(1000);
+        }
+    }
+  
+    
+    else if(v2 < v1)
+      
+    {
+                    printf("------------------------\n\r");
+                   printf("Discharge detected \r\n");
+                   printf("------------------------\n\r");
+        while (1)
+        {
+            AFEC1_ConversionStart();
+            while(!AFEC1_ChannelResultIsReady(AFEC_CH1))
+            {
+            
+            };
+            //channel 1 is PC13 ad4 - current
+            //channel 0 is PB1 dig23 - voltage
+            
+            current = AFEC1_ChannelResultGet(AFEC_CH1)*factor2*capacity*C_rate/1000;
+            
+             
+            SOC = SOC - factor1;
+            count = count + 1;
+        
+            printf("---------------------------------\r\n");
+            printf("SOC = %f %%\r\n",SOC*100);
+            printf("---------------------------------\r\n");   
+        
+            if (SOC < 0.000000){
+                printf("---------------------------------\r\n");
+                printf("END OF DISCHARGE (%i seconds)\r\n",count);
+                printf("---------------------------------\r\n");
+                GPIO_PA23_Set();
+              
+            }
+        SYSTICK_DelayMs(1000);
+        }
+    }
+       
+    GPIO_PA23_Clear();
+    }*/
+     
+    
+   
+    
+void check(void);
+  
+
+_Noreturn void discharge(void)
+{
+    /* PIO_PinInterruptCallbackRegister(GPIO_PA9_PIN, &switch_handler, (uintptr_t) NULL );
+    PIO_PinInterruptEnable(GPIO_PA9_PIN);*/
+                  
+        while (1)
+        {
+                   printf("------------------------\n\r");
+                   printf("Discharge detected \r\n");
+                   printf("------------------------\n\r");
+                   check();
+                   
+           /* AFEC1_ConversionStart();
+            while(!AFEC1_ChannelResultIsReady(AFEC_CH1))
+            {
+            
+            };
+            //channel 1 is PC13 ad4 - current
+            //channel 0 is PB1 dig23 - voltage
+            
+            current = AFEC1_ChannelResultGet(AFEC_CH1)*factor2*capacity*C_rate/1000;
+            
+             
+            SOC1 = SOC1 - factor1;
+            count = count + 1;
+        
+            printf("---------------------------------\r\n");
+            printf("SOC = %f %%\r\n",SOC1*100);
+            printf("---------------------------------\r\n"); 
+            
+        
+            if (SOC1 < SOC2){
+                printf("---------------------------------\r\n");
+                printf("END OF DISCHARGE (%i seconds)\r\n",count);
+                printf("---------------------------------\r\n");
+                GPIO_PA23_Set();
+                   return EXIT_FAILURE;
+              
+            }*/
+               SYSTICK_DelayMs(4000);
+        }
+    }
+_Noreturn void charge(void)
+{
+    /* PIO_PinInterruptCallbackRegister(GPIO_PA9_PIN, &switch_handler, (uintptr_t) NULL );
+    PIO_PinInterruptEnable(GPIO_PA9_PIN);*/
+      
+          while (1)
+        {
+        printf("------------------------\n\r");
+       printf("Charing detected\r\n");
+       printf("------------------------\n\r");
+       check();
+           /* AFEC1_ConversionStart();
+            while(!AFEC1_ChannelResultIsReady(AFEC_CH1)){
+            
+            };
+            //channel 1 is PC13 ad4 - current
+            //channel 0 is PB1 dig23 - voltage
+            current = AFEC1_ChannelResultGet(AFEC_CH1)*factor2*capacity*C_rate/1000;
+           
+            SOC1 = SOC1 + factor1;
+            count = count + 1;
+            
+        
+            printf("---------------------------------\r\n");
+            printf("SOC = %f %%\r\n",SOC1*100);
+            printf("---------------------------------\r\n");   
+        
+            if (SOC1 > SOC2){
+                printf("---------------------------------\r\n");
+                printf("END OF CHARGE (%i seconds)\r\n",count);
+                printf("---------------------------------\r\n");
+                GPIO_PA23_Set();
+             return EXIT_FAILURE ;
+                
+                
+            }*/
+        
+            SYSTICK_DelayMs(4000);
+        }
+}
+_Noreturn void check ()
+{
+    
+    AFEC1_ConversionStart();
+    while(!AFEC1_ChannelResultIsReady(AFEC_CH0)){   
+    };
+    v2 = AFEC1_ChannelResultGet(AFEC_CH0)*factor2;
+    if (v1 < v2)
+    {
+        charge();
+    }
+    else
+    {
+        discharge();
+    }
+}
+int main ( void )
+{
+    /* Initialize all modules */
+    SYS_Initialize ( NULL );
+    
+    SYSTICK_TimerStart();
+    
+/*    PIO_PinInterruptCallbackRegister(GPIO_PA9_PIN, &switch_handler, (uintptr_t) NULL );
+    PIO_PinInterruptEnable(GPIO_PA9_PIN);*/
+    
+    
+    printf("------------------------\n\r");
+    printf("Enter voltage v1 within 4 seconds\r\n");
+    printf("------------------------\n\r");
+    
+      SYSTICK_DelayMs(4000);
+       
+    
+    SOC_start();
+    SOC1 = SOC;
+    v1 = voltage;
+    printf("SOC1 = %f , v1 = %d\n\r",SOC1, voltage);
+   /* AFEC1_ConversionStart();
+    while(!AFEC1_ChannelResultIsReady(AFEC_CH0)){   
+    };
+    v1 = AFEC1_ChannelResultGet(AFEC_CH0)*factor2;*/
+    voltage = 0;
+    printf("------------------------\n\r");
+    printf("Enter voltage v2 within 4seconds\r\n");
+    printf("------------------------\n\r");
+    
+    SYSTICK_DelayMs(4000);
+    
+    SOC_start();
+     SOC2 = SOC;
+     v2 = voltage;
+     printf("SOC2 = %f , v2 = %d\n\r",SOC2,voltage);
+     printf("************************\n\r");
+     //printf("v1 - v2 = %d\n\r", v1-v2);
+    
+    
+    
+    
+   /* AFEC1_ConversionStart();
+    while(!AFEC1_ChannelResultIsReady(AFEC_CH0)){   
+    };
+    v2 = AFEC1_ChannelResultGet(AFEC_CH0)*factor2;*/
+    
+    if (v1 > v2)
+    {
+        discharge();
+    }
+             
+    
+     else if (v1 < v2)
+    {
+        charge();
+    }
+ 
+     else 
+     {
+            printf("---------------------------------\r\n");
+            printf("SOC = %f %%\r\n",SOC*100);
+            printf("---------------------------------\r\n");     
+     }
+         return ( EXIT_FAILURE ); 
+    }
+    /* Execution should not come here during normal operation */
+
+    
+
+
+
+
