@@ -1,0 +1,49 @@
+#include <stddef.h>                     // Defines NULL
+#include <stdbool.h>                    // Defines true
+#include <stdlib.h>                     // Defines EXIT_FAILURE
+#include "definitions.h"                // SYS function prototypes
+#include <string.h>
+#include<stdio.h>
+
+#define LED_On()      LED_Clear()
+#define LED_Off()     LED_Set()
+#define factor2         3253/4096
+#define factor         factor2/0.01
+
+
+
+unsigned int  v1 , v2 , v3, v4 ;
+
+
+
+
+ 
+
+int main (void)
+{
+     SYS_Initialize (NULL);
+SYSTICK_TimerStart();
+printf("Enter voltage\n\r");
+while(1)
+{
+AFEC0_ConversionStart ();  //PD30 - AFEC0 AD0- pinAD3 ; PA19 - AFEC0 AD8 - pinAD2 ; PE04 AFEC0 AD4 - pinAD7 ; PE05 AFEC0 AD3 - pinAD11
+
+while(!AFEC0_ChannelResultIsReady(AFEC_CH0) && AFEC0_ChannelResultIsReady(AFEC_CH8) && AFEC0_ChannelResultIsReady(AFEC_CH3) && AFEC0_ChannelResultIsReady(AFEC_CH4) )
+{
+    
+};
+v1 = AFEC0_ChannelResultGet(AFEC_CH0) *factor2;
+v2 = AFEC0_ChannelResultGet(AFEC_CH8) *factor2;
+v3 = AFEC0_ChannelResultGet(AFEC_CH3) *factor2;
+v4 = AFEC0_ChannelResultGet(AFEC_CH4) *factor2;
+
+//current = AFEC1_ChannelResultGet(AFEC_CH4) *factor;
+//temperature = AFEC1_ChannelResultGet(AFEC_CH5) *factor2;
+printf("v1 = %d\n\r",v1);
+printf("v2 = %d\n\r",v2);
+printf("v3 = %d\n\r",v3);
+printf("v4 = %d\n\r",v4);
+printf("---------------\n\r");
+SYSTICK_DelayMs(1000);
+}
+}
